@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Swagger UI Local History</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.18.0/swagger-ui.css" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      Reference the <a href="https://danbehar.github.io/swagger-ui-localhistory">README</a> for more information about Swagger UI Local History.
+    </div>
+    <div id="swagger-ui"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.18.0/swagger-ui-bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.18.0/swagger-ui-standalone-preset.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    
+    <script src="./swagger-store-response.js" type="text/babel"></script>
+    <script src="./swagger-store-response-ui.js" type="text/babel"></script>
+    
+    <script type="text/babel">
+      const onLoadFunction = function() {
+        const ui = SwaggerUIBundle({
+          // Connect to the petstore
+          url: "https://petstore.swagger.io/v2/swagger.json",
+          // Set the intial state
+          initialState: getInitialStateForSwaggerUI(),
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl,
+            // Custom Plugin that stores the responses
+            StoreDataPlugin,
+            // Custom Plugin that displays the responses
+            DisplayResponsesStandaloneLayoutPlugin
+          ],
+          // Custom Layout that displays the responses
+          layout: "DisplayResponsesStandaloneLayout"
+      });
+      window.ui = ui
+    };
+
+    // Due to transpiling in browser, was seeing use cases when onload wasn't firing due to it already being complete.
+    const isComplete = () => document.readyState === 'complete';
+    if (isComplete()) {
+      // Document has already loaded
+      onLoadFunction();
+    } else {
+      // Not in loaded state. Add listener.
+      document.addEventListener('readystatechange', () => isComplete() && onLoadFunction());
+    }
+  </script>
+  </body>
+</html>
